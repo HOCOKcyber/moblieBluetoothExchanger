@@ -3,4 +3,5 @@
     <string name="send">Отправить</string>
     <string name="need_get_permission">Необходимо получить разрешение</string>
     <string name="need_on_bluetooth">Необхожимо включить Bluetooth</string>
+    <string name="start_discovery">Начать сканирование</string>
 </resources>
