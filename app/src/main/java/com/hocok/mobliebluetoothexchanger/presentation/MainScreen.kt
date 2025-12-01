@@ -17,9 +17,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.hocok.mobliebluetoothexchanger.R
+import com.hocok.mobliebluetoothexchanger.domain.model.PermissionScreenState
 
 @Composable
-fun MainScreen(){
+fun MainScreen(
+    permissionScreenState: PermissionScreenState
+){
     val message = remember{ mutableStateOf("") }
 
     Scaffold { innerPadding ->
@@ -30,14 +33,19 @@ fun MainScreen(){
         ) {
             TextField(
                 value = message.value,
-                onValueChange = { message.value = it}
+                onValueChange = { message.value = it},
+                enabled = permissionScreenState.enable
             )
             Button(
-                onClick = { exchange(message) }
+                onClick = { exchange(message) },
+                enabled = permissionScreenState.enable
             ) {
                 Text(
                     text = stringResource(R.string.send)
                 )
+            }
+            if (!permissionScreenState.enable){
+                Text("Необходимо получить разрешение")
             }
         }
     }
@@ -50,5 +58,5 @@ fun exchange(message: MutableState<String>){
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen()
+    MainScreen(PermissionScreenState())
 }

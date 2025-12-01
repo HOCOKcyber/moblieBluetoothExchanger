@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">moblieBluetoothExchanger</string>
     <string name="send">Отправить</string>
+    <string name="reason_disable">Необходимо получить разрешение</string>
 </resources>
