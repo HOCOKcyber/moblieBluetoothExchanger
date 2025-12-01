@@ -21,9 +21,11 @@ import com.hocok.mobliebluetoothexchanger.domain.model.PermissionScreenState
 
 @Composable
 fun MainScreen(
-    permissionScreenState: PermissionScreenState
+    permissionScreenState: MutableState<PermissionScreenState>
 ){
     val message = remember{ mutableStateOf("") }
+    val state = permissionScreenState.value
+    val isAllEnable = state.bluetoothEnable && state.permissionEnable
 
     Scaffold { innerPadding ->
         Column(
@@ -34,18 +36,24 @@ fun MainScreen(
             TextField(
                 value = message.value,
                 onValueChange = { message.value = it},
-                enabled = permissionScreenState.enable
+                enabled = isAllEnable
             )
             Button(
                 onClick = { exchange(message) },
-                enabled = permissionScreenState.enable
+                enabled = isAllEnable
             ) {
                 Text(
                     text = stringResource(R.string.send)
                 )
             }
-            if (!permissionScreenState.enable){
-                Text("Необходимо получить разрешение")
+
+            when{
+                !state.permissionEnable -> {
+                    Text(stringResource(R.string.need_get_permission))
+                }
+                !state.bluetoothEnable -> {
+                    Text(stringResource(R.string.need_on_bluetooth))
+                }
             }
         }
     }
@@ -58,5 +66,6 @@ fun exchange(message: MutableState<String>){
 @Preview
 @Composable
 fun MainScreenPreview(){
-    MainScreen(PermissionScreenState())
+    val state = mutableStateOf(PermissionScreenState())
+    MainScreen(state)
 }
