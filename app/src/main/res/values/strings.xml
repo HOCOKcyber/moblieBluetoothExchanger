@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">moblieBluetoothExchanger</string>
+    <string name="send">Отправить</string>
 </resources>
