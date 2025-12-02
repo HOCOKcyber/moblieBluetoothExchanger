@@ -1,6 +1,5 @@
 package com.hocok.mobliebluetoothexchanger.presentation
 
-import android.bluetooth.BluetoothDevice
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,16 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.hocok.mobliebluetoothexchanger.R
-import com.hocok.mobliebluetoothexchanger.domain.model.PermissionScreenState
+import com.hocok.mobliebluetoothexchanger.domain.model.MainScreenState
 
 @Composable
 fun MainScreen(
-    permissionScreenState: PermissionScreenState,
+    state: MainScreenState,
     startDiscovery: () -> Unit,
-    listDevice: Set<BluetoothDevice>
 ){
     val message = remember{ mutableStateOf("") }
-    val isAllEnable = permissionScreenState.bluetoothEnable && permissionScreenState.permissionEnable
+    val isAllEnable = state.bluetoothEnable && state.permissionEnable
 
     Scaffold { innerPadding ->
         Column(
@@ -52,10 +50,10 @@ fun MainScreen(
             }
 
             when{
-                !permissionScreenState.permissionEnable -> {
+                !state.permissionEnable -> {
                     Text(stringResource(R.string.need_get_permission))
                 }
-                !permissionScreenState.bluetoothEnable -> {
+                !state.bluetoothEnable -> {
                     Text(stringResource(R.string.need_on_bluetooth))
                 }
             }
@@ -66,9 +64,9 @@ fun MainScreen(
                 Text(stringResource(R.string.start_discovery))
             }
 
-            if (permissionScreenState.permissionEnable){
+            if (state.permissionEnable){
                 LazyColumn {
-                    items(listDevice.toList()){device ->
+                    items(state.deviceSet.toList()){device ->
                         Text(device.name)
                     }
                 }
@@ -85,8 +83,7 @@ fun exchange(message: MutableState<String>){
 @Composable
 fun MainScreenPreview(){
     MainScreen(
-        PermissionScreenState(),
+        MainScreenState(),
         startDiscovery = {},
-        listDevice = setOf()
         )
 }

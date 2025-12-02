@@ -1,6 +1,9 @@
 package com.hocok.mobliebluetoothexchanger.domain.model
 
-data  class PermissionScreenState(
+import android.bluetooth.BluetoothDevice
+
+data class MainScreenState(
     val permissionEnable: Boolean = false,
     val bluetoothEnable: Boolean = false,
+    val deviceSet: Set<BluetoothDevice> = setOf()
 )
