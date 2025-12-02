@@ -45,12 +45,29 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+
+                BluetoothAdapter.ACTION_SCAN_MODE_CHANGED -> {
+                    val state = intent.getIntExtra(
+                        BluetoothAdapter.EXTRA_SCAN_MODE,
+                        BluetoothAdapter.ERROR
+                    )
+
+                    mainScreenState.value = mainScreenState.value.copy(
+                        isScannable = state == BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE
+                    )
+                }
             }
         }
     }
 
     private val getPermission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){isGranted  ->
         mainScreenState.value = getState()
+    }
+
+    private val getScanResponse = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+        mainScreenState.value = mainScreenState.value.copy(
+            isScannable = result.resultCode != RESULT_CANCELED
+        )
     }
 
     private val mainScreenState by lazy { mutableStateOf(MainScreenState()) }
@@ -82,6 +99,7 @@ class MainActivity : ComponentActivity() {
                 MainScreen(
                     mainScreenState.value,
                     startDiscovery = ::getDevices,
+                    startDiscoverable = ::startDiscoverable
                 )
             }
             getPermission.launch(permissions)
@@ -91,6 +109,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         val filter = IntentFilter().apply {
+            addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED)
             addAction(BluetoothAdapter.ACTION_STATE_CHANGED)
             addAction(BluetoothDevice.ACTION_FOUND)
         }
@@ -100,6 +119,13 @@ class MainActivity : ComponentActivity() {
     override fun onPause() {
         super.onPause()
         unregisterReceiver(combinedBluetoothReceiver)
+    }
+
+    fun startDiscoverable(){
+        val discoverableIntent: Intent = Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE).apply {
+            putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 10)
+        }
+        getScanResponse.launch(discoverableIntent)
     }
 
     private fun getDevices() =

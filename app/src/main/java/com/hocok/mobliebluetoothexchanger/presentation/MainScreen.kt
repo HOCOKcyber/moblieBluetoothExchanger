@@ -25,6 +25,7 @@ import com.hocok.mobliebluetoothexchanger.domain.model.MainScreenState
 fun MainScreen(
     state: MainScreenState,
     startDiscovery: () -> Unit,
+    startDiscoverable: () -> Unit,
 ){
     val message = remember{ mutableStateOf("") }
     val isAllEnable = state.bluetoothEnable && state.permissionEnable
@@ -71,6 +72,17 @@ fun MainScreen(
                     }
                 }
             }
+
+            Button(
+                onClick = startDiscoverable,
+                enabled = !state.isScannable
+            ) {
+                if (state.isScannable){
+                    Text("Доступно для обнаружения")
+                } else {
+                    Text("Сделать доступным для обнаружения")
+                }
+            }
         }
     }
 }
@@ -85,5 +97,6 @@ fun MainScreenPreview(){
     MainScreen(
         MainScreenState(),
         startDiscovery = {},
+        startDiscoverable = {}
         )
 }
